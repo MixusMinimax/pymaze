@@ -58,7 +58,7 @@ class Window:
                         self.display, c, (rx + cs - wt, ry + cs - wt, wt, wt))
                     pygame.draw.rect(self.display, c, (rx, ry + cs - wt, wt, wt))
 
-        if updated:
+        if updated and False:
             print(f'Updated: {updated}')
         pygame.display.update()
         return True
