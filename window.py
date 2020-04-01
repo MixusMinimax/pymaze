@@ -22,34 +22,43 @@ class Window:
                 return False
                 pygame.quit()
 
-        self.display.fill((100, 20, 100))
         cs = self.cell_size
         wt = self.wall_thickness
 
-        for y in range(self.size[1]):
-            for x in range(self.size[0]):
-                rx = x * self.cell_size
-                ry = y * self.cell_size
-                node = maze.field[y][x]
-                if node.to_bin():
-                    pygame.draw.rect(self.display, (230,)
-                                     * 3, (rx, ry, cs, cs))
-                c = (30, 20, 40)
-                if not node.north:
-                    pygame.draw.rect(self.display, c, (rx, ry, cs, wt))
-                if not node.east:
-                    pygame.draw.rect(
-                        self.display, c, (rx + cs - wt, ry, wt, cs))
-                if not node.south:
-                    pygame.draw.rect(
-                        self.display, c, (rx, ry + cs - wt, cs, wt))
-                if not node.west:
-                    pygame.draw.rect(self.display, c, (rx, ry, wt, cs))
-                pygame.draw.rect(self.display, c, (rx, ry, wt, wt))
-                pygame.draw.rect(self.display, c, (rx + cs - wt, ry, wt, wt))
-                pygame.draw.rect(
-                    self.display, c, (rx + cs - wt, ry + cs - wt, wt, wt))
-                pygame.draw.rect(self.display, c, (rx, ry + cs - wt, wt, wt))
+        updated = 0
 
+        for y in range(maze.size[1]):
+            for x in range(maze.size[0]):
+                if maze.changed[y][x]:
+                    maze.changed[y][x] = False
+                    updated += 1
+                    rx = x * self.cell_size
+                    ry = y * self.cell_size
+                    node = maze.field[y][x]
+                    if node.to_bin():
+                        pygame.draw.rect(self.display, (230,)
+                                        * 3, (rx, ry, cs, cs))
+                    else:
+                        pygame.draw.rect(
+                            self.display, (100, 20, 100), (rx, ry, cs, cs))
+                    c = (30, 20, 40)
+                    if not node.north:
+                        pygame.draw.rect(self.display, c, (rx, ry, cs, wt))
+                    if not node.east:
+                        pygame.draw.rect(
+                            self.display, c, (rx + cs - wt, ry, wt, cs))
+                    if not node.south:
+                        pygame.draw.rect(
+                            self.display, c, (rx, ry + cs - wt, cs, wt))
+                    if not node.west:
+                        pygame.draw.rect(self.display, c, (rx, ry, wt, cs))
+                    pygame.draw.rect(self.display, c, (rx, ry, wt, wt))
+                    pygame.draw.rect(self.display, c, (rx + cs - wt, ry, wt, wt))
+                    pygame.draw.rect(
+                        self.display, c, (rx + cs - wt, ry + cs - wt, wt, wt))
+                    pygame.draw.rect(self.display, c, (rx, ry + cs - wt, wt, wt))
+
+        if updated:
+            print(f'Updated: {updated}')
         pygame.display.update()
         return True
