@@ -148,10 +148,9 @@ def main():
             maze.load(data[2:])
 
     # Display
-    from window import Window
-    window = Window()
-
     if args.window:
+        from window import Window
+        window = Window()
         window.open(size, (1500, 900))
 
     maze_generator = None
