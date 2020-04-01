@@ -1,5 +1,7 @@
 import math
 import os
+import threading
+import time
 
 # Maze
 
@@ -73,6 +75,9 @@ def main():
     parser.add_argument('-s', '--size', action='store',
                         help='size of the maze, width and then height',
                         type=int, nargs='+', default=[1, 1])
+    parser.add_argument('-w', '--window', action='store_true',
+                        help='draw maze with pygame',
+                        default=False)
 
     args = parser.parse_args()
 
@@ -85,10 +90,21 @@ def main():
             size = [data[0], data[1]]
             maze = Maze(size)
             maze.load(data[2:])
-            print(maze)
-    
 
     # Maze Generation
+    from window import Window
+    window = Window()
+
+    if args.window:
+        window.open(size, (1000, 700))
+
+    running = True
+    while running:
+        if args.window:
+            running = window.update(maze)
+        
+        time.sleep(.1)
+        
 
     if args.output != None:
         with open(args.output, 'wb') as out_file:
