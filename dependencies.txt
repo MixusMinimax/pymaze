@@ -1,0 +1,4 @@
+autopep8==1.5
+numpy==1.18.2
+pycodestyle==2.5.0
+pygame==1.9.6
