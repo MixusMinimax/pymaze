@@ -154,7 +154,9 @@ def main():
     if args.window:
         window.open(size, (1500, 900))
 
-    maze_generator = maze.generate((40, 30))
+    maze_generator = None
+    if not args.input:
+        maze_generator = maze.generate((40, 30))
 
     running = True
     while running:
@@ -167,6 +169,9 @@ def main():
             except StopIteration:
                 maze_generator = None
         # time.sleep(.1)
+
+        if not args.window and not maze_generator:
+            running = False
 
     if args.output != None:
         with open(args.output, 'wb') as out_file:

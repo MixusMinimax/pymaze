@@ -1,9 +1,6 @@
 import pygame
 import math
 
-pygame.init()
-
-
 class Window:
 
     def open(self, size, max_window_size):
