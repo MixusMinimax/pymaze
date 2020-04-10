@@ -41,65 +41,68 @@ class Maze:
         for i, b in enumerate(bin):
             w = self.size[0]
             self.field[(i * 2) // w][(i * 2) % w] = Node((b >> 4) & 0b1111)
-            self.field[(i * 2 + 1) // w][(i * 2 + 1) % w] = Node(b & 0b1111)
+            if (i * 2 + 1) < (w * self.size[1]):
+                self.field[(i * 2 + 1) // w][(i * 2 + 1) %
+                                             w]=Node(b & 0b1111)
 
     def save(self):
-        l = math.ceil(self.size[0] * self.size[1] / 2)
-        w = self.size[0]
-        bin = bytearray()
+        l=math.ceil(self.size[0] * self.size[1] / 2)
+        w=self.size[0]
+        bin=bytearray()
         for i in range(l):
             bin.append(
                 (self.field[(i * 2) // w][(i * 2) % w].to_bin() << 4) |
-                self.field[(i * 2 + 1) // w][(i * 2 + 1) % w].to_bin()
+                ((self.field[(i * 2 + 1) // w][(i * 2 + 1) %
+                                               w].to_bin()) if (i * 2 + 1) < (self.size[0] * self.size[1]) else 0)
             )
         return bin
 
     def generate(self, start: Node):
-        stack = [(start, None)]
-        visited = []
-        previous = None
+        stack=[(start, None)]
+        visited=[]
+        previous=None
 
         while len(stack) > 0:
-            next = stack.pop()
+            next=stack.pop()
             if next[0] in visited:
                 continue
             visited.append(next[0])
-            self.changed[next[0][1]][next[0][0]] = True
-            previous = next[1]
+            self.changed[next[0][1]][next[0][0]]=True
+            previous=next[1]
             if previous:
-                self.changed[previous[1]][previous[0]] = True
+                self.changed[previous[1]][previous[0]]=True
                 if previous[0] < next[0][0]:
-                    self.get(previous).east = True
-                    self.get(next[0]).west = True
+                    self.get(previous).east=True
+                    self.get(next[0]).west=True
                 elif previous[0] > next[0][0]:
-                    self.get(previous).west = True
-                    self.get(next[0]).east = True
+                    self.get(previous).west=True
+                    self.get(next[0]).east=True
                 elif previous[1] < next[0][1]:
-                    self.get(previous).south = True
-                    self.get(next[0]).north = True
+                    self.get(previous).south=True
+                    self.get(next[0]).north=True
                 elif previous[1] > next[0][1]:
-                    self.get(previous).north = True
-                    self.get(next[0]).south = True
-            neighbors = [
+                    self.get(previous).north=True
+                    self.get(next[0]).south=True
+            neighbors=[
                 ((next[0][0] - 1, next[0][1]), next[0]),
                 ((next[0][0] + 1, next[0][1]), next[0]),
                 ((next[0][0], next[0][1] - 1), next[0]),
                 ((next[0][0], next[0][1] + 1), next[0])
             ]
-            neighbors = [p for p in neighbors if self.in_bounds(
+            neighbors=[p for p in neighbors if self.in_bounds(
                 p[0]) and p[0] not in visited]
             random.shuffle(neighbors)
             [stack.append(p) for p in neighbors]
             yield
 
     def in_bounds(self, pos):
-        x = pos[0]
-        y = pos[1]
+        x=pos[0]
+        y=pos[1]
         return x >= 0 and y >= 0 and x < self.size[0] and y < self.size[1]
 
     def get(self, pos):
-        x = pos[0]
-        y = pos[1]
+        x=pos[0]
+        y=pos[1]
         if not self.in_bounds(pos):
             raise AttributeError
         return self.field[y][x]
@@ -118,7 +121,7 @@ def is_valid_file(parser, arg):
 def main():
     # Parse arguments
     import argparse
-    parser = argparse.ArgumentParser(description='Generate and display mazes')
+    parser=argparse.ArgumentParser(description='Generate and display mazes')
     parser.add_argument('-i', '--input', action='store',
                         help='file that contains maze', metavar='FILE',
                         type=lambda x: is_valid_file(parser, x))
@@ -135,46 +138,46 @@ def main():
                         help='generate a random maze',
                         default=False)
 
-    args = parser.parse_args()
+    args=parser.parse_args()
 
-    size = args.size
-    maze = Maze(size)
+    size=args.size
+    maze=Maze(size)
 
     if args.input != None:
         with open(args.input, 'rb') as in_file:
-            data = in_file.read()
-            size = [data[0], data[1]]
-            maze = Maze(size)
+            data=in_file.read()
+            size=[data[0], data[1]]
+            maze=Maze(size)
             maze.load(data[2:])
 
     # Display
     if args.window:
         from window import Window
-        window = Window()
+        window=Window()
         window.open(size, (1500, 900))
 
-    maze_generator = None
+    maze_generator=None
     if not args.input:
-        maze_generator = maze.generate((40, 30))
+        maze_generator=maze.generate((0, 0))
 
-    running = True
+    running=True
     while running:
         if args.window:
-            running = window.update(maze)
+            running=window.update(maze)
 
         if maze_generator:
             try:
                 maze_generator.__next__()
             except StopIteration:
-                maze_generator = None
+                maze_generator=None
         # time.sleep(.1)
 
         if not args.window and not maze_generator:
-            running = False
+            running=False
 
     if args.output != None:
         with open(args.output, 'wb') as out_file:
-            data = bytearray(maze.size) + maze.save()
+            data=bytearray(maze.size) + maze.save()
             out_file.write(data)
 
 
