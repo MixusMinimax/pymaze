@@ -157,7 +157,7 @@ def main():
         window.open(size, (1500, 900))
 
     maze_generator=None
-    if not args.input:
+    if not args.input and args.generate:
         maze_generator=maze.generate((0, 0))
 
     running=True
