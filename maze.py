@@ -137,6 +137,9 @@ def main():
     parser.add_argument('-g', '--generate', action='store_true',
                         help='generate a random maze',
                         default=False)
+    parser.add_argument('-r', '--repetitions', action='store',
+                        help='repetitions per frame',
+                        type=int, default=1)
 
     args=parser.parse_args()
 
@@ -166,10 +169,11 @@ def main():
             running=window.update(maze)
 
         if maze_generator:
-            try:
-                maze_generator.__next__()
-            except StopIteration:
-                maze_generator=None
+            for i in range(args.repetitions):
+                try:
+                    maze_generator.__next__()
+                except StopIteration:
+                    maze_generator=None
         # time.sleep(.1)
 
         if not args.window and not maze_generator:
